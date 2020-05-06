@@ -1,30 +1,58 @@
 {
-  "name": "homebridge-web-thermostat",
-  "version": "1.3.1",
-  "description": "Homebridge plugin for a web-based thermostat",
-  "main": "index.js",
-  "dependencies": {
-    "request": ">=2.88.0",
-    "ip": ">=1.1.5"
+  "_from": "homebridge-eedomus-thermostat@latest",
+  "_id": "homebridge-eedomus-thermostat@1.3.1",
+  "_inBundle": false,
+  "_integrity": "sha512-pevfKInOnLi0H+z3QC5mQdJAAIWlxfz6QjjW8y+xPcGn+TSJjHIt/jCC7bX1HUt7P9meOOmB5uPkKGUFx6lWtg==",
+  "_location": "/homebridge-eedomus-thermostat",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "homebridge-eedomus-thermostat@latest",
+    "name": "homebridge-eedomus-thermostat",
+    "escapedName": "homebridge-eedomus-thermostat",
+    "rawSpec": "latest",
+    "saveSpec": null,
+    "fetchSpec": "latest"
   },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostat/-/homebridge-eedomus-thermostat-1.3.1.tgz",
+  "_shasum": "b33d392c0e7bbe4784091b062df8ce10671cc1b8",
+  "_spec": "homebridge-eedomus-thermostat@latest",
+  "_where": "C:\\Windows\\System32",
+  "author": {
+    "name": "lpaso"
+  },
+  "bugs": {
+    "url": "https://github.com/lp4so/homebridge-eedomus-thermostat/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "ip": ">=1.1.5",
+    "request": ">=2.88.0"
+  },
+  "deprecated": false,
+  "description": "Homebridge plugin for a web-based thermostat",
   "engines": {
     "homebridge": ">=0.4.50",
     "node": ">=12.13.0"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tommrodrigues/homebridge-web-thermostat.git"
-  },
+  "homepage": "https://github.com/lp4so/homebridge-eedomus-thermostat#readme",
   "keywords": [
     "homebridge-plugin"
   ],
-  "author": "Tom Rodrigues",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Tommrodrigues/homebridge-web-thermostat/issues"
+  "main": "index.js",
+  "name": "homebridge-eedomus-thermostat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lp4so/homebridge-eedomus-thermostat.git"
   },
-  "homepage": "https://github.com/Tommrodrigues/homebridge-web-thermostat#readme"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.3.1"
 }

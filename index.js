@@ -7,16 +7,16 @@ const http = require('http')
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
-  homebridge.registerAccessory('homebridge-web-thermostat', 'Thermostat', Thermostat)
+  homebridge.registerAccessory('homebridge-eedomus-thermostat', 'Thermostat', Thermostat)
 }
 
 function Thermostat (log, config) {
   this.log = log
 
   this.name = config.name
-  this.apiroute = config.apiroute
+  this.apiroute = config.apiroute || 'api.eedomus.com'
   this.pollInterval = config.pollInterval || 300
-
+  this.heatOnly = true
   this.listener = config.listener || false
   this.port = config.port || 2000
   this.requestArray = ['targetHeatingCoolingState', 'targetTemperature', 'coolingThresholdTemperature', 'heatingThresholdTemperature']
@@ -26,24 +26,18 @@ function Thermostat (log, config) {
   this.model = config.model || packageJson.name
   this.firmware = config.firmware || packageJson.version
 
-  this.username = config.username || null
-  this.password = config.password || null
+  this.thermostatid = config.thermostatid
+  this.heaterid = config.heaterid
+  this.thermometerid = config.thermometerid
+
+  this.apiuser = config.apiuser || null
+  this.apisecret = config.apisecret || null
   this.timeout = config.timeout || 3000
   this.http_method = config.http_method || 'GET'
 
-  this.temperatureThresholds = config.temperatureThresholds || false
-
-  this.currentRelativeHumidity = config.currentRelativeHumidity || false
   this.temperatureDisplayUnits = config.temperatureDisplayUnits || 0
-  this.maxTemp = config.maxTemp || 30
-  this.minTemp = config.minTemp || 15
-
-  if (this.username != null && this.password != null) {
-    this.auth = {
-      user: this.username,
-      pass: this.password
-    }
-  }
+  this.maxTemp = config.maxTemp || 25
+  this.minTemp = config.minTemp || 16
 
   if (this.listener) {
     this.server = http.createServer(function (request, response) {
@@ -90,38 +84,86 @@ Thermostat.prototype = {
   },
 
   _getStatus: function (callback) {
-    var url = this.apiroute + '/status'
-    this.log.debug('Getting status: %s', url)
+    var url = this.apiroute + '/get?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id='
+    
+    var heaterurl = url + this.heaterid
+    var thermometerurl = url + this.thermometerid
+    var thermostaturl = url + this.thermostatid
 
-    this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
+
+    this.log.debug('Getting heater status: %s', heaterurl)
+    this._httpRequest(heaterurl, '', this.http_method, function (error, response, responseBody) {
       if (error) {
-        this.log.warn('Error getting status: %s', error.message)
+        this.log.warn('Error getting heater status: %s', error.message)
         this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(new Error('Polling failed'))
         callback(error)
-      } else {
+      }
+      else {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
-        this.service.getCharacteristic(Characteristic.TargetTemperature).updateValue(json.targetTemperature)
-        this.log('Updated TargetTemperature to: %s', json.targetTemperature)
-        this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(json.currentTemperature)
-        this.log('Updated CurrentTemperature to: %s', json.currentTemperature)
-        this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(json.targetHeatingCoolingState)
-        this.log('Updated TargetHeatingCoolingState to: %s', json.targetHeatingCoolingState)
-        this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(json.currentHeatingCoolingState)
-        this.log('Updated CurrentHeatingCoolingState to: %s', json.currentHeatingCoolingState)
-        if (this.temperatureThresholds) {
-          this.service.getCharacteristic(Characteristic.CoolingThresholdTemperature).updateValue(json.coolingThresholdTemperature)
-          this.log('Updated CoolingThresholdTemperature to: %s', json.coolingThresholdTemperature)
-          this.service.getCharacteristic(Characteristic.HeatingThresholdTemperature).updateValue(json.heatingThresholdTemperature)
-          this.log('Updated HeatingThresholdTemperature to: %s', json.heatingThresholdTemperature)
-        }
-        if (this.currentRelativeHumidity) {
-          this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(json.currentRelativeHumidity)
-          this.log('Updated CurrentRelativeHumidity to: %s', json.currentRelativeHumidity)
-        }
-        callback()
+
+	      var rescurrentHeatingCoolingState = json.body.last_value
+        if(rescurrentHeatingCoolingState != 0){
+		      rescurrentHeatingCoolingState = 1
+	      }
+	      this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(rescurrentHeatingCoolingState) 
+        this.log('Updated CurrentHeatingCoolingState to: %s', rescurrentHeatingCoolingState)
+	      callback()
       }
     }.bind(this))
+    
+    ///*
+    this.log.debug('Getting heater status: %s', thermometerurl)
+    this._httpRequest(thermometerurl, '', this.http_method, function (error, response, responseBody) {
+      if (error) {
+        this.log.warn('Error getting thermometer status: %s', error.message)
+        this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(new Error('Polling failed'))
+        callback(error)
+      }
+      else {
+        this.log.debug('Device response: %s', responseBody)
+        var json = JSON.parse(responseBody)
+
+	      this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(json.body.last_value)
+        this.log('Updated CurrentTemperature to: %s', json.body.last_value)
+	      callback()
+      }
+   }.bind(this))
+
+    this.log.debug('Getting thermostat status: %s', thermostaturl)
+    this._httpRequest(thermostaturl, '', this.http_method, function (error, response, responseBody) {
+      if (error) {
+        this.log.warn('Error getting thermostat status: %s', error.message)
+        this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(new Error('Polling failed'))
+        callback(error)
+      }
+      else {
+        this.log.debug('Device response: %s', responseBody)
+        var json = JSON.parse(responseBody)
+
+	      var resTargetHeatingCoolingState = json.body.last_value
+	
+	      var tgTemp = 0
+	      var tgState = 0
+
+        if(resTargetHeatingCoolingState > 5 && resTargetHeatingCoolingState <= 30){
+		      tgTemp = resTargetHeatingCoolingState
+		      tgState = 1
+	      }
+	      else if(resTargetHeatingCoolingState == 5 || resTargetHeatingCoolingState == 'pause'){
+		      tgTemp = 5
+		      tgState = 0
+	      }
+	      else{
+		      callback()
+	      }
+	      this.service.getCharacteristic(Characteristic.TargetTemperature).updateValue(tgTemp)
+        this.log('Updated TargetTemperature to: %s', tgTemp)
+	      this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(tgState)
+        this.log('Updated TargetHeatingCoolingState to: %s', tgState)
+        callback()
+      }
+    }.bind(this)) //*/
   },
 
   _httpHandler: function (characteristic, value) {
@@ -148,7 +190,16 @@ Thermostat.prototype = {
   },
 
   setTargetHeatingCoolingState: function (value, callback) {
-    var url = this.apiroute + '/targetHeatingCoolingState/' + value
+    var thvalue = 0
+    if(value == 0 || value == 2){
+	thvalue = 5
+    }
+    if(value == 1 || value == 3){
+	thvalue = 20
+    }
+
+    var url = this.apiroute + '/set?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id=' + this.thermostatid + '&value=' + thvalue
+    
     this.log.debug('Setting targetHeatingCoolingState: %s', url)
 
     this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
@@ -164,8 +215,8 @@ Thermostat.prototype = {
   },
 
   setTargetTemperature: function (value, callback) {
-    value = value.toFixed(1)
-    var url = this.apiroute + '/targetTemperature/' + value
+    value = Math.round(value)
+    var url = this.apiroute + '/set?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id=' + this.thermostatid + '&value=' + value
     this.log.debug('Setting targetTemperature: %s', url)
 
     this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
@@ -231,8 +282,16 @@ Thermostat.prototype = {
       .setProps({
         minValue: this.minTemp,
         maxValue: this.maxTemp,
-        minStep: 0.5
+        minStep: 1
       })
+
+    if (this.heatOnly) {
+        this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).setProps({
+	    minValue: 0,
+	    maxValue: 1,
+	    validValues: [0,1]
+        });
+    }
 
     if (this.temperatureThresholds) {
       this.service
