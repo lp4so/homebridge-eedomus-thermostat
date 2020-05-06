@@ -1,6 +1,6 @@
-# homebridge-web-thermostat
+# homebridge-eedomus-thermostat
 
-[![npm](https://img.shields.io/npm/v/homebridge-web-thermostat.svg)](https://www.npmjs.com/package/homebridge-web-thermostat) [![npm](https://img.shields.io/npm/dt/homebridge-web-thermostat.svg)](https://www.npmjs.com/package/homebridge-web-thermostat)
+[![npm](https://img.shields.io/npm/v/homebridge-eedomus-thermostat.svg)](https://www.npmjs.com/package/homebridge-eedomus-thermostat) [![npm](https://img.shields.io/npm/dt/homebridge-eedomus-thermostat.svg)](https://www.npmjs.com/package/homebridge-eedomus-thermostat)
 
 ## Description
 
@@ -9,7 +9,7 @@ This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a web-ba
 ## Installation
 
 1. Install [homebridge](https://github.com/nfarina/homebridge#installation-details)
-2. Install this plugin: `npm install -g homebridge-web-thermostat`
+2. Install this plugin: `npm install -g homebridge-eedomus-thermostat`
 3. Update your `config.json` file
 
 ## Configuration
@@ -29,21 +29,23 @@ This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a web-ba
 | --- | --- | --- |
 | `accessory` | Must be `Thermostat` | N/A |
 | `name` | Name to appear in the Home app | N/A |
-| `apiroute` | Root URL of your device | N/A |
+| `apiroute` | Eedomus URL (http://localip/api OR https://api.eedomus.com) | N/A |
+| `apiuser` | Eedomus API_USER | N/A |
+| `apisecret` | Eedomus API_SECRET | N/A |
+| `thermometerid` | API ID of the thermometer used in eedomus | N/A |
+| `thermostatid` | API ID of the thermostat used in eedomus | N/A |
+| `heaterid` | API ID of one heater used in eedomus | N/A |
 
 ### Optional fields
 | Key | Description | Default |
 | --- | --- | --- |
 | `temperatureDisplayUnits` | Whether you want °C (`0`) or °F (`1`) as your units | `0` |
-| `currentRelativeHumidity` | Whether to include `currentRelativeHumidity` as a field in `/status` | `false` |
-| `maxTemp` | Upper bound for the temperature selector in the Home app | `30` |
-| `minTemp` | Lower bound for the temperature selector in the Home app | `15` |
-| `temperatureThresholds` | Whether you want the thermostat accessory to have heating and cooling temperature thresholds | `false` |
+| `maxTemp` | Upper bound for the temperature selector in the Home app | `25` |
+| `minTemp` | Lower bound for the temperature selector in the Home app | `16` |
 
 ### Additional options
 | Key | Description | Default |
 | --- | --- | --- |
-| `listener` | Whether to start a listener to get real-time changes from the device | `false` |
 | `pollInterval` | Time (in seconds) between device polls | `300` |
 | `timeout` | Time (in milliseconds) until the accessory will be marked as _Not Responding_ if it is unreachable | `3000` |
 | `port` | Port for your HTTP listener (if enabled) | `2000` |
@@ -54,73 +56,3 @@ This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a web-ba
 | `serial` | Appears under the _Serial_ field for the accessory | apiroute |
 | `manufacturer` | Appears under the _Manufacturer_ field for the accessory | author |
 | `firmware` | Appears under the _Firmware_ field for the accessory | version |
-
-## API Interfacing
-
-Your API should be able to:
-
-1. Return JSON information when it receives `/status`:
-```
-{
-    "targetHeatingCoolingState": INT_VALUE,
-    "targetTemperature": FLOAT_VALUE,
-    "currentHeatingCoolingState": INT_VALUE,
-    "currentTemperature": FLOAT_VALUE
-}
-```
-
-**Note:** You must also include the following fields in `/status` if enabled in the `config.json`:
-
-- `currentRelativeHumidity`
-- `coolingThresholdTemperature` & `heatingThresholdTemperature`
-
-2. Set `targetHeatingCoolingState` when it receives:
-```
-/targetHeatingCoolingState/INT_VALUE
-```
-
-3. Set `targetTemperature` when it receives:
-```
-/targetTemperature/FLOAT_VALUE
-```
-
-4. _(if enabled)_ Set `coolingThresholdTemperature` when it receives:
-```
-/coolingThresholdTemperature/FLOAT_VALUE
-```
-
-5. _(if enabled)_ `heatingThresholdTemperature` when it receives:
-```
-/heatingThresholdTemperature/FLOAT_VALUE
-```
-
-### Optional (if listener is enabled)
-
-1. Update `targetHeatingCoolingState` following a manual override by messaging the listen server:
-```
-/targetHeatingCoolingState/INT_VALUE
-```
-
-2. Update `targetTemperature` following a manual override by messaging the listen server:
-```
-/targetTemperature/FLOAT_VALUE
-```
-
-3. _(if enabled)_ Update `coolingThresholdTemperature` following a manual override by messaging the listen server:
-```
-/coolingThresholdTemperature/FLOAT_VALUE
-```
-
-4. _(if enabled)_ Update `heatingThresholdTemperature` following a manual override by messaging the listen server:
-```
-/heatingThresholdTemperature/FLOAT_VALUE
-```
-
-## HeatingCoolingState Key
-
-| Number | Name |
-| --- | --- |
-| `0` | Off |
-| `1` | Heat |
-| `2` | Cool |
-| `3` | Auto |
