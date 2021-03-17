@@ -1,6 +1,6 @@
 {
   "_from": "homebridge-eedomus-thermostat",
-  "_id": "homebridge-eedomus-thermostat@1.4",
+  "_id": "homebridge-eedomus-thermostat@1.4.0",
   "_inBundle": false,
   "_integrity": "sha512-5sqpZSlgwii17TyvaHW6BWLuZT8q3yNgYL3jS+VQwlF9lo+acSjeJwP1mP9k1Edk67J7OKFAK22EridF278s/A==",
   "_location": "/homebridge-eedomus-thermostat",
@@ -19,7 +19,7 @@
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostat/-/homebridge-eedomus-thermostat-1.4.tgz",
+  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostat/-/homebridge-eedomus-thermostat-1.4.0.tgz",
   "_shasum": "39785e2493705f674bc49bcff92c1d84149ae006",
   "_spec": "homebridge-eedomus-thermostat",
   "_where": "C:\\Users\\lp",
@@ -54,5 +54,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.4"
+  "version": "1.4.0"
 }
