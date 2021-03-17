@@ -1,17 +1,17 @@
 {
-  "_from": "homebridge-eedomus-thermostat@latest",
-  "_id": "homebridge-eedomus-thermostat@1.3.2",
+  "_from": "homebridge-eedomus-thermostat",
+  "_id": "homebridge-eedomus-thermostat@1.4",
   "_inBundle": false,
-  "_integrity": "sha512-pevfKInOnLi0H+z3QC5mQdJAAIWlxfz6QjjW8y+xPcGn+TSJjHIt/jCC7bX1HUt7P9meOOmB5uPkKGUFx6lWtg==",
+  "_integrity": "sha512-5sqpZSlgwii17TyvaHW6BWLuZT8q3yNgYL3jS+VQwlF9lo+acSjeJwP1mP9k1Edk67J7OKFAK22EridF278s/A==",
   "_location": "/homebridge-eedomus-thermostat",
   "_phantomChildren": {},
   "_requested": {
     "type": "tag",
     "registry": true,
-    "raw": "homebridge-eedomus-thermostat@latest",
+    "raw": "homebridge-eedomus-thermostat",
     "name": "homebridge-eedomus-thermostat",
     "escapedName": "homebridge-eedomus-thermostat",
-    "rawSpec": "latest",
+    "rawSpec": "",
     "saveSpec": null,
     "fetchSpec": "latest"
   },
@@ -19,10 +19,10 @@
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostat/-/homebridge-eedomus-thermostat-1.3.2.tgz",
-  "_shasum": "b33d392c0e7bbe4784091b062df8ce10671cc1b8",
-  "_spec": "homebridge-eedomus-thermostat@latest",
-  "_where": "C:\\Windows\\System32",
+  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostat/-/homebridge-eedomus-thermostat-1.4.tgz",
+  "_shasum": "39785e2493705f674bc49bcff92c1d84149ae006",
+  "_spec": "homebridge-eedomus-thermostat",
+  "_where": "C:\\Users\\lp",
   "author": {
     "name": "lpaso"
   },
@@ -54,5 +54,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.3.2"
+  "version": "1.4"
 }

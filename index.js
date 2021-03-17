@@ -76,6 +76,8 @@ Thermostat.prototype = {
       method: this.http_method,
       timeout: this.timeout,
       rejectUnauthorized: false,
+      agent: false,
+      pool: {maxSockets: Infinity},
       auth: this.auth
     },
     function (error, response, body) {
@@ -103,16 +105,19 @@ Thermostat.prototype = {
         var json = JSON.parse(responseBody)
 
 	      var rescurrentHeatingCoolingState = json.body.last_value
-        if(rescurrentHeatingCoolingState != 0){
+        if(rescurrentHeatingCoolingState > 20){
 		      rescurrentHeatingCoolingState = 1
 	      }
+else{
+rescurrentHeatingCoolingState = 0
+}
 	      this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(rescurrentHeatingCoolingState) 
         this.log('Updated CurrentHeatingCoolingState to: %s', rescurrentHeatingCoolingState)
 	      callback()
       }
     }.bind(this))
     
-    ///*
+    
     this.log.debug('Getting heater status: %s', thermometerurl)
     this._httpRequest(thermometerurl, '', this.http_method, function (error, response, responseBody) {
       if (error) {
@@ -123,10 +128,9 @@ Thermostat.prototype = {
       else {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
-
-	      this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(json.body.last_value)
+	this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(json.body.last_value)
         this.log('Updated CurrentTemperature to: %s', json.body.last_value)
-	      callback()
+	callback()
       }
    }.bind(this))
 
@@ -141,29 +145,31 @@ Thermostat.prototype = {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
 
-	      var resTargetHeatingCoolingState = json.body.last_value
-	
-	      var tgTemp = 0
-	      var tgState = 0
+	var resTargetHeatingCoolingState = json.body.last_value
+
+	var tgTemp = 0
+	var tgState = 0
 
         if(resTargetHeatingCoolingState > 5 && resTargetHeatingCoolingState <= 30){
-		      tgTemp = resTargetHeatingCoolingState
-		      tgState = 1
-	      }
-	      else if(resTargetHeatingCoolingState == 5 || resTargetHeatingCoolingState == 'pause'){
-		      tgTemp = 5
-		      tgState = 0
-	      }
-	      else{
-		      callback()
-	      }
-	      this.service.getCharacteristic(Characteristic.TargetTemperature).updateValue(tgTemp)
-        this.log('Updated TargetTemperature to: %s', tgTemp)
-	      this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(tgState)
+		tgTemp = resTargetHeatingCoolingState
+		tgState = 1
+	}
+	else if(resTargetHeatingCoolingState == 5 || resTargetHeatingCoolingState == 'pause'){
+		tgTemp = 5
+		tgState = 0
+	}
+	else{
+		callback()
+	}
+	if(tgTemp > 5){
+	      	this.service.getCharacteristic(Characteristic.TargetTemperature).updateValue(tgTemp)
+        	this.log('Updated TargetTemperature to: %s', tgTemp)
+	}
+	this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(tgState)
         this.log('Updated TargetHeatingCoolingState to: %s', tgState)
         callback()
       }
-    }.bind(this)) //*/
+    }.bind(this))
   },
 
   _httpHandler: function (characteristic, value) {
@@ -192,10 +198,10 @@ Thermostat.prototype = {
   setTargetHeatingCoolingState: function (value, callback) {
     var thvalue = 0
     if(value == 0 || value == 2){
-	thvalue = 5
+	thvalue = 'pause'
     }
     if(value == 1 || value == 3){
-	thvalue = 20
+	thvalue = 'resume'
     }
 
     var url = this.apiroute + '/set?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id=' + this.thermostatid + '&value=' + thvalue
