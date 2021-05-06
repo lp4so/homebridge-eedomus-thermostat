@@ -1,4 +1,4 @@
-# homebridge-eedomus-thermostat
+# homebridge-eedomus-thermostatAC
 
 [![npm](https://img.shields.io/npm/v/homebridge-eedomus-thermostat.svg)](https://www.npmjs.com/package/homebridge-eedomus-thermostat) [![npm](https://img.shields.io/npm/dt/homebridge-eedomus-thermostat.svg)](https://www.npmjs.com/package/homebridge-eedomus-thermostat)
 
