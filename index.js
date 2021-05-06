@@ -27,7 +27,7 @@ function Thermostat (log, config) {
   this.firmware = config.firmware || packageJson.version
 
   this.thermostatid = config.thermostatid
-  this.heaterid = config.heaterid
+  this.ACid = config.ACid
   this.thermometerid = config.thermometerid
 
   this.apiuser = config.apiuser || null
@@ -36,8 +36,8 @@ function Thermostat (log, config) {
   this.http_method = config.http_method || 'GET'
 
   this.temperatureDisplayUnits = config.temperatureDisplayUnits || 0
-  this.maxTemp = config.maxTemp || 25
-  this.minTemp = config.minTemp || 16
+  this.maxTemp = config.maxTemp || 28
+  this.minTemp = config.minTemp || 18
 
   if (this.listener) {
     this.server = http.createServer(function (request, response) {
@@ -88,15 +88,15 @@ Thermostat.prototype = {
   _getStatus: function (callback) {
     var url = this.apiroute + '/get?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id='
     
-    var heaterurl = url + this.heaterid
+    var ACurl = url + this.ACid
     var thermometerurl = url + this.thermometerid
     var thermostaturl = url + this.thermostatid
 
 
-    this.log.debug('Getting heater status: %s', heaterurl)
-    this._httpRequest(heaterurl, '', this.http_method, function (error, response, responseBody) {
+    this.log.debug('Getting heater status: %s', ACurl)
+    this._httpRequest(ACurl, '', this.http_method, function (error, response, responseBody) {
       if (error) {
-        this.log.warn('Error getting heater status: %s', error.message)
+        this.log.warn('Error getting AC status: %s', error.message)
         this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(new Error('Polling failed'))
         callback(error)
       }
@@ -104,16 +104,15 @@ Thermostat.prototype = {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
 
-	      var rescurrentHeatingCoolingState = json.body.last_value
-        if(rescurrentHeatingCoolingState > 20){
-		      rescurrentHeatingCoolingState = 1
-	      }
-else{
-rescurrentHeatingCoolingState = 0
-}
-	      this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(rescurrentHeatingCoolingState) 
+	var rescurrentHeatingCoolingState = json.body.last_value
+        if(rescurrentHeatingCoolingState != 0){
+	      rescurrentHeatingCoolingState = 2
+	}
+	this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(rescurrentHeatingCoolingState) 
         this.log('Updated CurrentHeatingCoolingState to: %s', rescurrentHeatingCoolingState)
-	      callback()
+	this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(rescurrentHeatingCoolingState)
+        this.log('Updated TargetHeatingCoolingState to: %s', rescurrentHeatingCoolingState)
+	callback()
       }
     }.bind(this))
     
@@ -145,28 +144,11 @@ rescurrentHeatingCoolingState = 0
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
 
-	var resTargetHeatingCoolingState = json.body.last_value
+	var tgTemp = json.body.last_value
 
-	var tgTemp = 0
-	var tgState = 0
+	this.service.getCharacteristic(Characteristic.TargetTemperature).updateValue(tgTemp)
+        this.log('Updated TargetTemperature to: %s', tgTemp)
 
-        if(resTargetHeatingCoolingState > 5 && resTargetHeatingCoolingState <= 30){
-		tgTemp = resTargetHeatingCoolingState
-		tgState = 1
-	}
-	else if(resTargetHeatingCoolingState == 5 || resTargetHeatingCoolingState == 'pause'){
-		tgTemp = 5
-		tgState = 0
-	}
-	else{
-		callback()
-	}
-	if(tgTemp > 5){
-	      	this.service.getCharacteristic(Characteristic.TargetTemperature).updateValue(tgTemp)
-        	this.log('Updated TargetTemperature to: %s', tgTemp)
-	}
-	this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).updateValue(tgState)
-        this.log('Updated TargetHeatingCoolingState to: %s', tgState)
         callback()
       }
     }.bind(this))
@@ -196,15 +178,7 @@ rescurrentHeatingCoolingState = 0
   },
 
   setTargetHeatingCoolingState: function (value, callback) {
-    var thvalue = 0
-    if(value == 0 || value == 2){
-	thvalue = 'pause'
-    }
-    if(value == 1 || value == 3){
-	thvalue = 'resume'
-    }
-
-    var url = this.apiroute + '/set?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id=' + this.thermostatid + '&value=' + thvalue
+    var url = this.apiroute + '/set?api_user=' + this.apiuser + '&api_secret=' + this.apisecret + '&action=periph.value&periph_id=' + this.ACid + '&value=' + value
     
     this.log.debug('Setting targetHeatingCoolingState: %s', url)
 
@@ -291,13 +265,11 @@ rescurrentHeatingCoolingState = 0
         minStep: 1
       })
 
-    if (this.heatOnly) {
-        this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).setProps({
-	    minValue: 0,
-	    maxValue: 1,
-	    validValues: [0,1]
-        });
-    }
+    this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState).setProps({
+	minValue: 0,
+	maxValue: 2,
+	validValues: [0,2]
+    })
 
     if (this.temperatureThresholds) {
       this.service
