@@ -10,7 +10,7 @@ This is a fork from Tom Rodrigues's [homebridge-web-thermostat](https://github.c
 ## Installation
 
 1. Install [homebridge](https://github.com/nfarina/homebridge#installation-details)
-2. Install this plugin: `npm install -g homebridge-eedomus-thermostat`
+2. Install this plugin: `npm install -g homebridge-eedomus-thermostatAC`
 3. Update your `config.json` file
 
 ## Configuration
