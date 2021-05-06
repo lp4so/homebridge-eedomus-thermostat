@@ -35,14 +35,13 @@ This is a fork from Tom Rodrigues's [homebridge-web-thermostat](https://github.c
 | `apisecret` | Eedomus API_SECRET | N/A |
 | `thermometerid` | API ID of the thermometer used in eedomus | N/A |
 | `thermostatid` | API ID of the thermostat used in eedomus | N/A |
-| `heaterid` | API ID of one heater used in eedomus | N/A |
 
 ### Optional fields
 | Key | Description | Default |
 | --- | --- | --- |
 | `temperatureDisplayUnits` | Whether you want °C (`0`) or °F (`1`) as your units | `0` |
-| `maxTemp` | Upper bound for the temperature selector in the Home app | `25` |
-| `minTemp` | Lower bound for the temperature selector in the Home app | `16` |
+| `maxTemp` | Upper bound for the temperature selector in the Home app | `28` |
+| `minTemp` | Lower bound for the temperature selector in the Home app | `18` |
 
 ### Additional options
 | Key | Description | Default |
