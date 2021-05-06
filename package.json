@@ -1,16 +1,15 @@
 {
-  "_from": "homebridge-eedomus-thermostat",
-  "_id": "homebridge-eedomus-thermostat@1.4.0",
+  "_from": "homebridge-eedomus-thermostatAC",
   "_inBundle": false,
   "_integrity": "sha512-5sqpZSlgwii17TyvaHW6BWLuZT8q3yNgYL3jS+VQwlF9lo+acSjeJwP1mP9k1Edk67J7OKFAK22EridF278s/A==",
-  "_location": "/homebridge-eedomus-thermostat",
+  "_location": "/homebridge-eedomus-thermostatAC",
   "_phantomChildren": {},
   "_requested": {
     "type": "tag",
     "registry": true,
-    "raw": "homebridge-eedomus-thermostat",
-    "name": "homebridge-eedomus-thermostat",
-    "escapedName": "homebridge-eedomus-thermostat",
+    "raw": "homebridge-eedomus-thermostatAC",
+    "name": "homebridge-eedomus-thermostatAC",
+    "escapedName": "homebridge-eedomus-thermostatAC",
     "rawSpec": "",
     "saveSpec": null,
     "fetchSpec": "latest"
@@ -19,17 +18,14 @@
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostat/-/homebridge-eedomus-thermostat-1.4.0.tgz",
+  "_resolved": "https://registry.npmjs.org/homebridge-eedomus-thermostatAC/-/homebridge-eedomus-thermostatAC-1.4.0.tgz",
   "_shasum": "39785e2493705f674bc49bcff92c1d84149ae006",
-  "_spec": "homebridge-eedomus-thermostat",
+  "_spec": "homebridge-eedomus-thermostatAC",
   "_where": "C:\\Users\\lp",
-  "author": {
-    "name": "lpaso"
-  },
+  "author": "lpaso",
   "bugs": {
-    "url": "https://github.com/lp4so/homebridge-eedomus-thermostat/issues"
+    "url": "https://github.com/lp4so/homebridge-eedomus-thermostat/tree/AC/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "ip": ">=1.1.5",
     "request": ">=2.88.0"
@@ -40,13 +36,13 @@
     "homebridge": ">=0.4.50",
     "node": ">=12.13.0"
   },
-  "homepage": "https://github.com/lp4so/homebridge-eedomus-thermostat#readme",
+  "homepage": "https://github.com/lp4so/homebridge-eedomus-thermostat/tree/AC/#readme",
   "keywords": [
     "homebridge-plugin"
   ],
   "license": "MIT",
   "main": "index.js",
-  "name": "homebridge-eedomus-thermostat",
+  "name": "homebridge-eedomus-thermostatac",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lp4so/homebridge-eedomus-thermostat.git"
