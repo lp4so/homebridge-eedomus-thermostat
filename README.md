@@ -35,6 +35,7 @@ This is a fork from Tom Rodrigues's [homebridge-web-thermostat](https://github.c
 | `apisecret` | Eedomus API_SECRET | N/A |
 | `thermometerid` | API ID of the thermometer used in eedomus | N/A |
 | `thermostatid` | API ID of the thermostat used in eedomus | N/A |
+| `ACid` | API ID of the AC used in eedomus | N/A |
 
 ### Optional fields
 | Key | Description | Default |
